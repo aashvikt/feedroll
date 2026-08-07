@@ -15,20 +15,39 @@ PAGE_TEMPLATE = """<!doctype html>
         <title>feedroll: $title</title>
         <style>
             *, *::before, *::after { box-sizing: border-box; }
-            :root { color-scheme: light dark; }
+            :root {
+                color-scheme: light dark;
+                &:has(#light:checked) { color-scheme: light; };
+                &:has(#dark:checked) { color-scheme: dark; };
+            }
+            input[name=theme] { position: absolute; opacity: 0; }
+            input[name=theme]+label { cursor: pointer; }
+            input[name=theme]:focus+label { outline: 1px solid; }
+            input[name=theme]:checked+label { text-decoration: underline; }
             body {
                 font: 14px "DejaVu Sans", sans-serif;
-                max-width: min(85ch, 100%);
+                color: light-dark(#1a1a1a, #eaeaea);
+                background: light-dark(#fafafa, #121212);
+                max-width: min(70ch, 100%);
                 margin: 0 auto;
                 padding: 0 1ch;
             }
+            a { color: light-dark(blue, #0978db); }
         </style>
     </head>
     <body>
-        <p><a href="/">↩ Back to main site?</a></p>
-        <h1><a href="/feedroll">feedroll</a>: $title</h1>
+        <p>
+            <strong><a href="/" title="main site">↩ ash</a></strong> ·
+            <a href="/feedroll/sites">feed list</a> ·
+            <a href="/posts/feedroll-py">about this feedroll</a> ·
+            <input type=radio id=light name=theme aria-label="light mode"> <label for=light title="light mode">☼</label> /
+            <input type=radio id=dark name=theme aria-label="dark mode"> <label for=dark title="dark mode">☾</label>
+        </p>
+        <h1>
+            <a href="/feedroll">Feedroll</a>:
+            $title
+        </h1>
         <main>$content</main>
-        <p><a href="/feedroll/sites">View all sites</a> | <a href="/posts/feedroll-py">About this feedroll...</a></p>
     </body>
 </html>"""
 
@@ -60,7 +79,7 @@ def consume(feed_link): # insert "feed" joke
 
     page(
         slug,
-        f"{slug}'s feed",
+        f"{slug}'s Feed",
         f"""<h2><a href="{ffp_link}">{escape(parsed.feed.get('title', slug))}</a></h2>
         <ul>{'\n'.join(
             f"<li>{e.get('published', '0000-01-01')[:10]}: <a href='{escape(e.get('link', ffp_link))}'>{escape(e.get('title', '?'))}</a>"
@@ -96,7 +115,7 @@ with ThreadPoolExecutor(max_workers=min(32, len(flinks))) as executor:
         feeds[slug] = info[:FEED_ITEM_LIMIT]
         all_sites += f"<li><a href='/feedroll/{slug}'>{slug}</a></li>"
 
-page('sites', "site list", f"<ul>{all_sites}</ul>")
+page('sites', "Site List", f"<ul>{all_sites}</ul>")
 
 def days(date):
     y, m, d = map(int, date.split('-'))
@@ -132,10 +151,10 @@ for batch in range(0, len(roll), COUNT):
 
     page(
         str(page_number) if page_number>1 else '',
-        f"page {page_number}",
+        f"Page {page_number}",
         (
-            f"<p><a href='/feedroll/{page_number-1 if page_number>2 else ''}'>← previous page</a></p>" if page_number > 1 else '')
+            f"<p><a href='/feedroll/{page_number-1 if page_number>2 else ''}'>← Previous page</a></p>" if page_number > 1 else '')
             + f"<ul>{batch_li}</ul>"
-            + (f"<p><a href='/feedroll/{page_number+1}'>next page →</a></p>" if batch+COUNT < len(roll) else ''
+            + (f"<p><a href='/feedroll/{page_number+1}'>Next page →</a></p>" if batch+COUNT < len(roll) else ''
         )
     )
