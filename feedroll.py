@@ -32,7 +32,6 @@ PAGE_TEMPLATE = """<!doctype html>
                 margin: 0 auto;
                 padding: 0 1ch;
             }
-            a { color: light-dark(blue, #0978db); }
         </style>
     </head>
     <body>
