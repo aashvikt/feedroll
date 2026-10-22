@@ -32,6 +32,11 @@ PAGE_TEMPLATE = """<!doctype html>
                 margin: 0 auto;
                 padding: 0 1ch;
             }
+            @media (orientation: portrait) {
+                body {
+                    max-width: 100%;
+                }
+            }
         </style>
     </head>
     <body>
