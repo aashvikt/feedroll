@@ -28,14 +28,11 @@ PAGE_TEMPLATE = """<!doctype html>
                 font: 14px "DejaVu Sans", sans-serif;
                 color: light-dark(#1a1a1a, #eaeaea);
                 background: light-dark(#fafafa, #121212);
-                max-width: min(70ch, 100%);
+                width: fit-content;
+                max-width: 80ch;
+                @media (orientation: portrait) { max-width: 80%; }
                 margin: 0 auto;
                 padding: 0 1ch;
-            }
-            @media (orientation: portrait) {
-                body {
-                    max-width: 100%;
-                }
             }
         </style>
     </head>
